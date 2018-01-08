@@ -1,0 +1,2 @@
+# JSGame
+Simple browser game
