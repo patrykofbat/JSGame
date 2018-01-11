@@ -1,5 +1,8 @@
 var inputs = {
-    keyDown: null,
+    aDown: false,
+    sDown: false,
+    dDown: false,
+    wDown: false,
     mouseX: null,
     mouseY: null,
     mouseDown: false
@@ -7,13 +10,30 @@ var inputs = {
 
 function start() {
     var player = new Player(200, 200);
-    player.renderPlayer();
+    player.renderPlayer(inputs);
 
     document.addEventListener("keydown", (event) => {
-        inputs.keyDown = event.key;
+        if (event.key == "a")
+            inputs.aDown = true;
+        if (event.key == "s")
+            inputs.sDown = true;
+        if (event.key == "d")
+            inputs.dDown = true;
+        if (event.key == "w")
+            inputs.wDown = true;
+
+
     });
     document.addEventListener("keyup", (event) => {
-        inputs.keyDown = null;
+        if (event.key == "a")
+            inputs.aDown = false;
+        if (event.key == "s")
+            inputs.sDown = false;
+        if (event.key == "d")
+            inputs.dDown = false;
+        if (event.key == "w")
+            inputs.wDown = false;
+
     });
 
     document.addEventListener("mousemove", (event) => {
@@ -27,6 +47,13 @@ function start() {
     document.addEventListener("mousedown", (event) => { inputs.mouseDown = true; });
     document.addEventListener("mouseup", (event) => { inputs.mouseDown = false; });
 
-    var gameLoop = setInterval(() => { player.action(inputs) }, 1.5);
+    var gameLoop = setInterval(() => {
+        player.action(inputs);
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+        player.update(inputs);
+
+
+    }, 1.5);
 
 }
