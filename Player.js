@@ -4,18 +4,19 @@ class Player {
         this.xPosition = x;
         this.yPosition = y;
         this.ctx = ctx;
+        this.arrayBullet = [];
 
 
     }
 
     renderPlayer(inputs) {
-        var dY = (inputs.mouseY - this.yPosition);
-        var dX = (inputs.mouseX - this.xPosition);
-        var length = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
+        let dY = (inputs.mouseY - this.yPosition);
+        let dX = (inputs.mouseX - this.xPosition);
+        let length = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
 
         // wektor jednostowy pomonozy przez skalar
-        var xStep = 21 * (dX / length);
-        var yStep = 21 * (dY / length);
+        let xStep = 21 * (dX / length);
+        let yStep = 21 * (dY / length);
         this.ctx.save();
 
         this.ctx.beginPath();
@@ -38,51 +39,49 @@ class Player {
 
     update(inputs) {
         this.renderPlayer(inputs);
+        this.arrayBullet.forEach(bullet => {
+            if (!(bullet.x > window.innerWidth || bullet.x < 0 || bullet.y > window.innerHeight || bullet.y < 0))
+                bullet.update();
+            else {
+                this.arrayBullet.splice(this.arrayBullet.indexOf(bullet), 1);
+            }
+        });
+        // console.log(this.arrayBullet);
+
+
+    }
+
+    shoot(inputs) {
+        let bullet = new Bullet(this.ctx, inputs);
+        bullet.renderBullet(this.xPosition, this.yPosition);
+        this.arrayBullet.push(bullet);
+        console.log(this.arrayBullet);
+
     }
 
 
 
     action(key) {
         if (key.aDown) {
-            this.xPosition -= 1;
-            if (key.sDown) {
-                this.yPosition += 1;
-                if (key.mouseDown)
-                    console.log("shot!");
-            } else if (key.wDown) {
-                this.yPosition -= 1;
-                if (key.mouseDown)
-                    console.log("shot!");
-            } else if (key.mouseDown)
-                console.log("shot!");
-
+            this.xPosition -= 0.6;
+            if (key.sDown)
+                this.yPosition += 0.6;
+            else if (key.wDown)
+                this.yPosition -= 0.6;
         } else if (key.dDown) {
-            this.xPosition += 1;
+            this.xPosition += 0.6;
             if (key.sDown) {
-                this.yPosition += 1;
-                if (key.mouseDown)
-                    console.log("shot!");
-            } else if (key.wDown) {
-                this.yPosition -= 1;
-                if (key.mouseDown)
-                    console.log("shot!");
-            } else if (key.mouseDown)
-                console.log("shot!");
+                this.yPosition += 0.6;
+            } else if (key.wDown)
+                this.yPosition -= 0.6;
 
-
-        } else if (key.wDown) {
-            this.yPosition -= 1;
-            if (key.mouseDown)
-                console.log("shot!");
-
-
-        } else if (key.sDown) {
-            this.yPosition += 1;
-            if (key.mouseDown)
-                console.log("shot!");
-
-
+        } else if (key.wDown)
+            this.yPosition -= 0.6;
+        else if (key.sDown) {
+            this.yPosition += 0.6;
         }
+
+
 
 
     }

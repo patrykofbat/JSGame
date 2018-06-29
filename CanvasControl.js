@@ -10,9 +10,12 @@ class CanvasControl {
             dDown: false,
             wDown: false,
             mouseX: null,
-            mouseY: null,
-            mouseDown: false
+            mouseY: null
         };
+        this.zombie = new Zombie(this.ctx);
+        this.zombiePool = [];
+
+
 
     }
 
@@ -23,26 +26,35 @@ class CanvasControl {
     }
 
     start() {
-        console.log(this);
+        this.player.renderPlayer(this.inputs);
+        // this.zombie.renderZombie(500, 500);
+        let zombieSpawn = setInterval(()=>{
+            let newZombie = new Zombie(this.ctx);
+            newZombie.renderZombie(Math.random() * this.canvas.width, Math.random() *this.canvas.height);
+            console.log(`x ${Math.random() * this.canvas.width} y ${Math.random() *this.canvas.height}`);
+            this.zombiePool.push(newZombie);
+        }, 1000);
+
+
         document.addEventListener("keydown", (event) => {
-            if (event.key == "a")
+            if (event.key === "a")
                 this.inputs.aDown = true;
-            if (event.key == "s")
+            if (event.key === "s")
                 this.inputs.sDown = true;
-            if (event.key == "d")
+            if (event.key === "d")
                 this.inputs.dDown = true;
-            if (event.key == "w")
+            if (event.key === "w")
                 this.inputs.wDown = true;
         });
 
         document.addEventListener("keyup", (event) => {
-            if (event.key == "a")
+            if (event.key === "a")
                 this.inputs.aDown = false;
-            if (event.key == "s")
+            if (event.key === "s")
                 this.inputs.sDown = false;
-            if (event.key == "d")
+            if (event.key === "d")
                 this.inputs.dDown = false;
-            if (event.key == "w")
+            if (event.key === "w")
                 this.inputs.wDown = false;
 
         });
@@ -54,14 +66,17 @@ class CanvasControl {
 
         });
 
-        document.addEventListener("mousedown", (event) => { this.inputs.mouseDown = true; });
-        document.addEventListener("mouseup", (event) => { this.inputs.mouseDown = false; });
+        document.addEventListener("mousedown", (event) => {
+            this.player.shoot(this.inputs);
+        });
         document.addEventListener("resize", this.resizeCanvas);
 
-        this.player.renderPlayer(this.inputs);
 
-        var gameLoop = setInterval(() => {
+
+        let gameLoop = setInterval(()=>{
             this.update();
+
+
         }, 1.5);
 
     }
@@ -70,6 +85,19 @@ class CanvasControl {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.player.action(this.inputs);
         this.player.update(this.inputs);
+        this.player.arrayBullet.forEach(element => {
+            this.zombiePool.forEach(zombie =>{
+                zombie.checkCollsion(element);
+            });
+        });
+        this.zombiePool.forEach(zombie =>{
+            if(!zombie.isDead)
+                zombie.update(this.player.xPosition, this.player.yPosition);
+        });
+        // if (!(this.zombie.isDead))
+        //     this.zombie.update(this.player.xPosition, this.player.yPosition);
+
+
     }
 
 
