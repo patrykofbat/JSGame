@@ -27,7 +27,6 @@ class CanvasControl {
 
     start() {
         this.player.renderPlayer(this.inputs);
-        // this.zombie.renderZombie(500, 500);
         let zombieSpawn = setInterval(()=>{
             let newZombie = new Zombie(this.ctx);
             newZombie.renderZombie(Math.random() * this.canvas.width, Math.random() *this.canvas.height);
@@ -94,8 +93,6 @@ class CanvasControl {
             if(!zombie.isDead)
                 zombie.update(this.player.xPosition, this.player.yPosition);
         });
-        // if (!(this.zombie.isDead))
-        //     this.zombie.update(this.player.xPosition, this.player.yPosition);
 
 
     }
